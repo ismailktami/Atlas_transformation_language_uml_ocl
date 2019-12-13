@@ -1,0 +1,5 @@
+query TestGeneration = thisModule.mesInfos('ismail', 'ktami ismail', 21).
+writeTo('C:/Users/idrissi zineb/eclipse-workspace/ATL Project_Idrissi Janati Zineb/AppGenerees/message.txt');
+helper def:mesInfos(nom:String, prenom:String, age: Integer):String='je m\'appelle '
++nom+' '+prenom+', j\'ai '+age+'ans2';
+

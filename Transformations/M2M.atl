@@ -1,0 +1,29 @@
+-- @nsURI MM=http://www.eclipse.org/uml2/5.0.0/UML
+
+module M2M;
+create OUT : MM refining IN : MM;
+
+rule R1 {
+	from a:MM!Class(a.name.substring(1,1)<>'V')
+	to   b:MM!Class(
+		name<-a.name+'hey'
+	)
+}
+
+rule R2 {
+	from a:MM!Class(a.name.substring(1,1)='V')
+	to   b:MM!Class(
+		name<-a.name+a.name
+	)
+}
+
+
+rule createSettersGetters{
+	from a:MM!Property(not a.class.oclIsUndefined())
+	to 
+		 b:MM!Property(name<-a.name),
+		 c:MM!Operation(name<-'set'+a.name, type <-'void',class<-a.class),
+		 d:MM!Operation(name<-'get'+a.name, type <-'a.type.name',class<-a.class)
+		
+}
+

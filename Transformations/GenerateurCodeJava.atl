@@ -1,0 +1,259 @@
+query GenerateurCodeJava = 
+	MMU!Class.allInstances()->forAll(c | c.contenu().
+		writeTo('C:/Users/ktami/eclipse-workspace2/generationAtl/src/main/java'+'/'+c.getPackage()+'/'+c.corrigerNomClass()+'.java')
+			and 
+		c.generateInterfacesFromHeritage(c.superClass)
+	)
+	
+	and 
+	
+		MMU!Enumeration.allInstances()->forAll(c|c.createEnumeration().
+			writeTo('C:/Users/ktami/eclipse-workspace2/generationAtl/src/main/java/enumerations/'+c.name+'.java')
+		)	
+				
+	;	
+
+
+helper context MMU!Enumeration def: createEnumeration():Boolean=
+	
+	'package enumerations;\npublic enum '+self.name +'\n{'+self.generateOwnedLiteral()+'\n}';
+
+
+helper context MMU!Enumeration def :generateOwnedLiteral():String=
+	self.ownedLiteral->iterate(att;cc:String='\t'|cc+att.name+',\n\t')
+	;
+	
+helper context MMU!Class def:entete(dev:String, nomTP:String, nomClass:String):String=
+	'package '+self.getPackage()+';'+'\n'
+	+
+	self.getAlltypes()->iterate(e;acc:String=''|acc+self.importPackage(e))
+	+'\n'
+	;
+	
+helper context MMU!Class def:getPackage():String=
+		if (not self.package.oclIsUndefined()) then 
+			if self.package.name <> 'model' then
+				self.package.name
+			else 'model'
+			endif
+		else	
+			''
+		endif;
+
+
+helper context MMU!Class def:getAlltypes():Sequence(OclAny)=
+	 	self.ownedAttribute->reject(p|p.isBasicType())
+		;
+
+helper context MMU!Class def :importPackage(e:String):String=
+		if(e.type.name='EDate') then 
+		'import java.util.Date;\n'
+		else 
+		MMU!Package.allInstances()->iterate(p;acc:String=''|acc+
+			p.import(e)
+		)
+		endif;
+		
+		
+		
+helper context MMU!Package def :import(e:String):String=
+	if(not self.oclIsUndefined()) then  
+		self.ownedType->iterate(p;cc:String=''|cc+(if p.name=e.type.name then 'import '+ self.name+'.'+e.type.name+';\n' else '' endif))
+	else ''
+	endif;
+
+
+helper context MMU!Class def: contenu():String=
+	
+	    self.entete('ismail ktami',' transformation vers code java',self.corrigerNomClass())
+	    +self.visibility+' '+if(not self.ownedOperation->select(o|o.isAbstract()).isEmpty()) then 'abstract' else '' endif+' class  '+self.corrigerNomClass()+ ' ' +self.Heritate().replace(',{','{')+' '+'\n \n'
+		+self.genererAttribut()+'\n'
+		+self.constructer()+'\n'
+		+if(self.ownedAttribute->size()>0) then self.constructerParameter() else '' endif +'\n'
+		+self.genererMethod()+'\n'
+		+self.genererSetters()+'\n'
+		+self.genererGetters()+'\n'
+		+self.toString().replace('+ ;',';') 
+		+self.implementsMethodifExist()+'\n}'
+		;
+		
+
+helper context MMU!Class def:isHeritate():Boolean=
+	 self.superClass->size()>0;
+		
+helper context MMU!Class def:Heritate():String=
+	if( self.superClass->size()=1) then 'extends '+self.superClass.first().name +'{'
+	
+	else if(self.superClass->size()>1) then
+			self.superClass->iterate(cl;acc:String=' implements'|acc+' '+cl.name +',')+'{'
+	else '{'
+	endif
+	endif
+	;  
+
+helper context MMU!Class def:implementsMethodifExist():String=
+		if(self.isHeritate() and self.superClass.size()>1) then
+			self.superClass->iterate(cl;acc:String=''|acc+'\n\n\t//interface '+cl.name+'\n\t'+
+			cl.ownedOperation->iterate(c;acc2:String=''| acc2 +'\n\t' + c.visibility+' '+
+			if(c.type.oclIsUndefined()) then 
+				'void'
+			else c.type.name
+			endif
+			+' '+c.name+'('+
+ 			self.ParameterIn(c.ownedParameter->select(p|p.direction.toString()='in'))
+ 			.replace(   ',)' , ')')+'{}'
+			))
+		else
+			''
+
+		endif;
+
+helper context MMU!Class def:genererAttribut():String=self.ownedAttribute->iterate(c;acc:String='\n\t' | acc+c.visibility+' '+c.corrigerType()+' '+c.name+';\n\t');
+
+
+
+helper context MMU!Class def:constructer():String=
+	'\tpublic '+self.corrigerNomClass()+'()\n\t\t{'+'\n\t\t\t'+
+		self.ownedAttribute->iterate(att;acc:String=' '|acc+att.name+' = '+att.ElementAffectation()+';\n\t\t')+'}';
+	
+	
+helper context MMU!Class def:constructerParameter():String=
+	'\tpublic '+self.corrigerNomClass()+'('+self.ParameterIn(self.ownedAttribute).replace(',)',')')+'\n\t\t{'+'\n\t\t'+
+		self.ownedAttribute->iterate(att;acc:String=' '|acc+'this.'+att.name+' = '+att.name+';\n\t\t')+'}';
+	
+helper context MMU!Class def:generateInterfacesFromHeritage(meres:Sequence(OclAny)):Boolean=
+				
+	if meres->size()>1 then
+		meres->forAll(cl|cl.genereInterafce().writeTo('C:/Users/ktami/eclipse-workspace2/generationAtl/src/main/java/'+cl.getPackage()+'/'+cl.name+'.java'))
+	else 
+		true
+	endif;
+		       
+	
+
+helper context MMU!Class def:genereInterafce():String=
+		'package '+self.getPackage()+';\n public interface '+ self.name+ '\n\t\t{\n\t\t'
+		 
+		 +self.ownedOperation->iterate(c;acc:String='' | acc+c.visibility+' ' 
+ 
+ 	   	 +if(c.isAbstract()) then 'abstract ' else if(c.isStatic()) then 'static ' else '' endif endif
+ 
+		 +if(c.type.oclIsUndefined()) then 'void'else c.type.name endif+' '+c.name+'('
+		 
+		 + self.ParameterIn(c.ownedParameter->select(p|p.direction.toString()='in'))+';\n\t\t'
+		 )
+		 
+	+'}'
+	
+	;
+
+
+helper context MMU!Class def:genererMethod():String=self.ownedOperation->iterate(c;acc:String='\n\t' | acc+c.visibility+' ' 
+ 
+	 +if(c.isAbstract()) then
+	 		'abstract ' 
+	 else if(c.isStatic()) then
+	 		'static '
+	else 
+		' '
+ 	endif endif
+	+
+	 if(c.type.oclIsUndefined()) then 'void'else c.type.name endif+' '+c.name+'('+
+ 		self.ParameterIn(c.ownedParameter->select(p|p.direction.toString()='in'))
+ 		.replace(',)' , ')')
+
+	+if(not c.isAbstract()) then
+		(if ( c.type.oclIsUndefined()) then 
+		'\n\t\t{\n\t\t}' 
+		else
+		'\n\t\t{\n\t\t\treturn '+c.ElementAffectation()+ ';\n\t\t}\n' 
+		endif
+		)
+	else
+		';'
+	endif
+	+'\n\t'
+		);
+
+
+helper context MMU!Class def: genererSetters():String=
+self.ownedAttribute->iterate(a;acc:String='\n\t'|acc+'public void set'+a.name.substring(1,1).toUpper()+a.name.substring(2,a.name.size()) +' ( '+a.corrigerType() +' '+a.name+')\n\t\t{\n\t\t\t '+'this.'+a.name+'='+a.name+';\n\t\t}\n\t');
+
+
+helper context MMU!Class def: genererGetters():String=
+self.ownedAttribute->iterate(a;acc:String='\n\t'|acc+'public '+a.corrigerType()+' get'+a.name.substring(1,1).toUpper()+a.name.substring(2,a.name.size()) +' ()\n\t\t{\n\t\t\t '+'return this.'+a.name+';\n\t\t}\n\t');
+
+
+helper context MMU!Class def: corrigerNomClass():String= 
+		self.name.substring(1,1).toUpper()+self.name.substring(2,self.name.size()).replace(' ','_').replace('-','_').replace('.','_').replace('\'','_');
+
+helper context MMU!Element def: corrigerNom():String= 
+		self.name.substring(1,1).toUpper()+self.name.substring(2,self.name.size()).replace(' ','_').replace('-','_').replace('.','_').replace('\'','_');
+
+
+helper context MMU!Class def:ParameterIn(parameters:Sequence(OclAny)) : String=
+		parameters->iterate(att;acc:String=''|acc + att.corrigerType()+' '+att.name+',' )+')';
+	
+helper context MMU!Class def:toString():String=
+				'\tpublic String toString()\n\t\t{\n\t\t\t return'
+	+	
+				if(self.ownedAttribute.size()>0) then 
+					self.ownedAttribute->iterate(att;acc:String=' '|acc + att.ElementToString() + ' + ')+';\n\t\t}\n'
+				else
+					'" ";\n\t\t}\n'
+				endif
+				;
+
+		
+helper context MMU!Element def:ElementAffectation():String=
+	if self.type->oclIsUndefined() then ''
+		else if self.type.name='Boolean' then 'false'
+		else if self.type.name='String'  then 'null'
+		else if self.type.name='Integer' then '0'
+		else if self.type.name='Real'    then '0.0'
+		else 'null'
+		endif
+		endif
+		endif
+		endif
+		endif;		
+		
+		
+helper context MMU!Element def:ElementToString():String=
+	if self.type->oclIsUndefined() then self.name+'.toStrin()'
+		else if self.type.name='Boolean' then self.name
+		else if self.type.name='String'  then self.name
+		else if self.type.name='Integer' then self.name
+		else if self.type.name='Real'    then self.name 
+		else self.name+'.toString()'
+		endif
+		endif
+		endif
+		endif
+		endif;		
+
+helper context MMU!Element def:corrigerType():String=
+		if self.type->oclIsUndefined() then 'Object'
+		else if self.type.name='Boolean' then 'boolean'
+		else if self.type.name='EDate' then 'Date'
+		else if self.type.name='String' then 'String'
+		else if self.type.name='Integer' then 'int'
+		else if self.type.name='Real' then 'float' 
+		else self.type.name
+		endif
+		endif
+		endif
+		endif
+		endif
+		endif;
+helper context MMU!Element def : isBasicType():Boolean=
+		if self.type.oclIsUndefined() then true
+		else if (self.type.name='Boolean' or self.type.name='String' or self.type.name='Integer' or self.type.name='Real' )
+			then true
+		else
+			false
+		endif
+		endif
+	;
+					
+		
