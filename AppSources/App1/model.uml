@@ -8,10 +8,10 @@
       <ownedAttribute xmi:type="uml:Property" xmi:id="_QKneUAeUEeqG5_AkDLbHCg" name="marque">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
       </ownedAttribute>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_b_ldMAyiEeqQwoAej4b31Q" name="matricule">
-        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-      </ownedAttribute>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_BwD_0AyjEeqQwoAej4b31Q" name="afficherInfoVoiture"/>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_b_ldMAyiEeqQwoAej4b31Q" name="matricule"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_BwD_0AyjEeqQwoAej4b31Q" name="afficherInfoVoiture">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_TFqfkC2mEeqwM56rbbPQ3w" name="shhvds" type="_1lDisAeYEeqG5_AkDLbHCg"/>
+      </ownedOperation>
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_9-WRQAeKEeqG5_AkDLbHCg" name="v'oiture prop.e-a">
       <ownedAttribute xmi:type="uml:Property" xmi:id="_0Qth8wymEeqQwoAej4b31Q" name="contrat" type="_AthdYAymEeqQwoAej4b31Q" association="_0Qth8AymEeqQwoAej4b31Q">
@@ -35,12 +35,16 @@
       <ownedOperation xmi:type="uml:Operation" xmi:id="_sDiF8AeUEeqG5_AkDLbHCg" name="ControleFinancier"/>
       <nestedClassifier xmi:type="uml:Actor" xmi:id="_5ELZIAeREeqG5_AkDLbHCg" name="Agence"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Class" xmi:id="_BOOtoAeLEeqG5_AkDLbHCg" name="Voiture_Electr">
+    <packagedElement xmi:type="uml:Class" xmi:id="_BOOtoAeLEeqG5_AkDLbHCg" name="Voiture_Electr" visibility="package">
       <ownedOperation xmi:type="uml:Operation" xmi:id="_zkub8AeTEeqG5_AkDLbHCg" name="consulterHistoirePanne"/>
       <ownedOperation xmi:type="uml:Operation" xmi:id="_328fEAeTEeqG5_AkDLbHCg" name="redigerRapport"/>
       <ownedOperation xmi:type="uml:Operation" xmi:id="_52oe4AeTEeqG5_AkDLbHCg" name="EnregistrerReparation"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_JiodsAeUEeqG5_AkDLbHCg" name="gererParcking"/>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_LwZ80AeUEeqG5_AkDLbHCg" name="gererPiecesRechanges"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_JiodsAeUEeqG5_AkDLbHCg" name="setrerParcking">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_jV2uYC2XEeqwM56rbbPQ3w" name="haha" direction="return">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EString"/>
+        </ownedParameter>
+      </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_LwZ80AeUEeqG5_AkDLbHCg" name="getrerPiecesRechanges" concurrency="concurrent"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Dependency" xmi:id="_CqkIwAeLEeqG5_AkDLbHCg" client="_9-WRQAeKEeqG5_AkDLbHCg" supplier="_9kQ9UAeKEeqG5_AkDLbHCg"/>
     <packagedElement xmi:type="uml:Dependency" xmi:id="_D3YhMAeLEeqG5_AkDLbHCg" client="_-TPjMAeKEeqG5_AkDLbHCg" supplier="_9kQ9UAeKEeqG5_AkDLbHCg"/>
@@ -77,7 +81,7 @@
         <generalization xmi:type="uml:Generalization" xmi:id="_epABMAeZEeqG5_AkDLbHCg" general="_MRA9QAeZEeqG5_AkDLbHCg"/>
       </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_AthdYAymEeqQwoAej4b31Q" name="Contrat">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_fj3fcAymEeqQwoAej4b31Q" name="id">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_fj3fcAymEeqQwoAej4b31Q" name="id,.regle">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         </ownedAttribute>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_kwtXwAymEeqQwoAej4b31Q" name="date">
@@ -107,6 +111,7 @@
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_l1MN4Be6Eeqkip6Q0HGfEg" name="nom">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedParameter>
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_yX6mEC2cEeqwM56rbbPQ3w" name="dzzdz" type="_9kQ9UAeKEeqG5_AkDLbHCg"/>
       </ownedOperation>
     </packagedElement>
     <packagedElement xmi:type="uml:Association" xmi:id="_DowKUAykEeqQwoAej4b31Q" visibility="private" memberEnd="_DpfxMAykEeqQwoAej4b31Q _DpysIAykEeqQwoAej4b31Q">
@@ -133,6 +138,16 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_8rlLAB1FEeqidYq0Pt2PzQ" name="Agence"/>
     <packagedElement xmi:type="uml:Class" xmi:id="_G7f0QB1JEeqidYq0Pt2PzQ" name="Proprietaire"/>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_uyijsCnfEeq9ia99HGV-HQ" name="Observer" visibility="package">
+      <generalization xmi:type="uml:Generalization" xmi:id="_fwHXQCnoEeq9ia99HGV-HQ" general="_pzM_ECnjEeq9ia99HGV-HQ"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_AfGFACngEeq9ia99HGV-HQ" name="update">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_AfGFASngEeq9ia99HGV-HQ" name="obj" effect="create">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EJavaObject"/>
+        </ownedParameter>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Usage" xmi:id="_FnHRQCnsEeq9ia99HGV-HQ" client="_uyijsCnfEeq9ia99HGV-HQ" supplier="_pzM_ECnjEeq9ia99HGV-HQ"/>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_pzM_ECnjEeq9ia99HGV-HQ" name="Subject"/>
     <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_-_vnYAeLEeqG5_AkDLbHCg">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_-_yqsQeLEeqG5_AkDLbHCg" source="PapyrusVersion">
         <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_-_yqsgeLEeqG5_AkDLbHCg" key="Version" value="0.0.1"/>

@@ -1,0 +1,14 @@
+Les classes suivantes ne sont pas respecte la règle 1
+	-La classe << v'oiture prop.e-a>>
+	-La classe << Chef Agence>>
+Les attributs suivantes ne sont pas respecte la règle 2
+	-L attribut id,.regle dans la classe : Contrat
+Les classes suivantes ne sont pas respecte la règle 3
+	-La classe v'oiture prop.e-a
+Les attributs suivantes ne sont pas respecte la règle 4
+	Les attribut  Voiture  dans la classeVoiture
+Les classes suivantes ne sont pas respecte la règle 5
+	-La classe Class20
+Les methodes suivantes ne sont pas respecte la règle 6
+	La methode setrerParcking dans la classe Voiture_Electr
+Les methodes suivantes ne sont pas respecte la règle 7

@@ -1,0 +1,96 @@
+
+query collection =
+				
+				 MMU!Class.allInstances()->forAll(c|c.genererInterfaces())			   
+	and
+			   	 MMU!Class.allInstances()->iterate(c;acc:String=' '|acc+'//for class '+c.name+'  \n' +c.importAll()).println()
+
+				 ;
+
+helper context MMU!Operation def : getParameterInTypes():Sequence(String)=
+	    self.ownedParameter->select(p|p.direction.toString()='in')->collect(e|e.type.name);
+
+helper context MMU!Class def: getAttributeTypes():Sequence(String)=
+	self.ownedAttribute->reject(e| e.type.oclIsUndefined())->collect(e|e.type.name);
+
+helper context MMU!Class def : getAllTypes():Sequence(String)=
+	self.getAttributeTypes()->union(self.ownedOperation->iterate(m;acc:Sequence(String)=Sequence{}|acc.union(m.getParameterInTypes())))
+	->reject(t|(t='String' or t='Integer' or t='Boolean' or t='Float' or t='Double'))
+	->asSet()
+	;
+
+helper context MMU!Class def:afficherImports():String=		
+	self.name+' need imports :: '+ self.getAllTypes() ->iterate(i;acc:String=''|acc+i+'  ')
+	;
+
+helper context MMU!Package def:import(type:String):String=
+	if self.ownedType->collect(e|e.name)->includes(type) then 
+		'import '+self.name+'.'+type+';\n'
+	else ''
+	endif;
+
+helper context MMU!Class def: importAll():String=
+	self.cotainsHeritageMultiple().replace(',.','')+'\n'
+	+self.importAlltypes()->iterate(t;acc:String=''|acc+MMU!Package.allInstances()->iterate(p;accc:String=''|accc+p.import(t)));
+	
+
+
+helper context MMU!Class def:importAlltypes():Set(String)=
+	
+	--getAll types in classes
+	 self.ownedAttribute->union(self.ownedOperation->iterate(o;acc:Set(String)=Set{}|acc->union(o.ownedParameter)))												
+						->reject(t|t.type.oclIsUndefined())
+						->reject(t|t='String' or t='Integer' or t='Boolean' or t='Float' or t='Double')							
+						->collect(t|t.type.name)
+					    ->asSet()
+		;
+
+helper context MMU!Class def:cotainsHeritageMultiple():String=
+	if self.superClass->size()>0 then
+			if self.superClass->size()<=1 then
+				self.name +' extends '+self.superClass->first().name +'\n'
+			else 
+					'extends '+self.superClass->first().name +','+self.superClass->iterate(s;acc:String=' implements '|acc+s.name +' , ')+'\n'
+			endif
+	else 
+		''
+	endif
+	+'.'
+	;
+
+helper context MMU!Class def:genererInterfaces():Boolean=
+		
+			if self.superClass->size()>1 then
+				    	self.superClass
+						    --->reject(e|e.name = self.superClass->first().name)
+							 ->excluding(self.superClass->first())
+							--->subSequence(2,self.superClass->size())
+							
+							
+						    ->forAll(i|('public interface  '+i.name +'\n{'+i.addMethodes()+'\n} ').writeTo('C:/Users/ismail ktami/Desktop/ATL Project_KTAMI ISMAIL/Transformations/'+i.name+'.java'))
+			
+			else 
+				true
+		   endif
+
+	
+
+	;
+
+helper context MMU!Class def:addMethodes():String=
+	
+	self.ownedOperation->iterate(o;acc:String='\n\t\t'|acc+o.signatureMethode());
+
+helper context MMU!Operation def:signatureMethode():String=
+		self.visibility.toString() +' '+self.getType()+' '+self.name+
+		(self.ownedParameter->iterate(p;acc:String='('|acc+p.type.name+' '+p.name)+')').replace(',)',')')+'{}\n\t\t'
+	
+	;
+		
+helper context MMU!Element def :getType():String=
+		if self.type.oclIsUndefined() then 
+			'void'
+		else 
+			self.type.name
+		endif
+	;

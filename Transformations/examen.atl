@@ -1,0 +1,46 @@
+
+query nombrePackage=
+	('nombre de package dan votre APP: '+MMU!Package.allInstances()->size().toString()+'\n'+
+	MMU!Package.allInstances()->reject(s|s.oclIsUndefined())->iterate( q ;acc:String=''|acc +q.afficherInformationPackage())
+	)
+	.println()	
+	;
+
+helper context MMU!Package def : afficherInformationPackage():String=
+	self.name +' contient '+self.ownedType->size().toString()+' class'+'\n\t\t'
++	
+	self.ownedType->select(c|c.oclIsTypeOf(MMU!Class))->iterate(aa;acc:String=''|acc+aa.afficherInformationClass()+'\n\t\t')
+	
+	;
+
+helper context MMU!Class def :afficherInformationClass():String=
+	self.name+'\n\t\t\t'+
+	self.affichernombreSuperClass()+
+	self.affichernombreAttributes()+
+	self.afficherMéthodes().replace(',.','')
+	
+	;
+helper context MMU!Class def : affichernombreSuperClass():String=
+	'nombre de classe mère '+self.superClass->size().toString()+'\n\t\t\t';
+
+
+helper context MMU!Class def : affichernombreAttributes():String=
+	'nombre Attributs est : '+self.ownedAttribute->size()+'\n\t\t\t';
+
+helper context MMU!Class def : afficherMéthodes():String=
+	self.ownedOperation->iterate(m;acc:String=''|acc+m.afficherInformationOperation()+',')+'.'
+	;
+
+
+helper context MMU!Operation def: afficherInformationOperation():String=
+	'(méthode '+self.name +'de type '+self.afficherType()+')'
+	;
+
+helper context MMU!Element def : afficherType():String=
+	if self.type.oclIsUndefined() then 
+		'void'
+	else 
+		self.type.name
+	endif
+	;
+

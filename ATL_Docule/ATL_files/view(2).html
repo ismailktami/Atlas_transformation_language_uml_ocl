@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!-- saved from url=(0131)https://help.eclipse.org/neon/advanced/view.jsp?view=search&topic=%2Forg.eclipse.m2m.atl.doc%2Fguide%2Fuser%2FThe-ATL-Language.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Search Results</title>
+
+<script language="JavaScript">
+
+function onloadHandler(e)
+{
+    resize();
+}
+
+function resize()
+{
+
+}
+
+var resized = false;
+
+// Called when the view is made visible. This function is needed because 
+// with IE the resize only works after the view has been displayed for the first time.
+
+function onShow() 
+{
+    if (!resized) {
+        resize();
+        resized = true;
+    }
+    try{
+		window.searchViewFrame.onShow();
+	} catch(ex) {}
+    
+}
+
+</script>
+
+</head>
+
+<frameset id="viewFrameset" onload="onloadHandler()" rows="24,*" frameborder="0" framespacing="0" border="0">
+	<frame id="toolbar" name="searchToolbarFrame" title="Search Results View Toolbar" src="./searchToolbar.html" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize="0" __idm_frm__="790">
+	
+		<frame name="searchViewFrame" title="Search Results View" src="./searchView.html" marginwidth="10" marginheight="0" frameborder="0" __idm_frm__="791">
+	
+</frameset>
+
+
+
+</html>

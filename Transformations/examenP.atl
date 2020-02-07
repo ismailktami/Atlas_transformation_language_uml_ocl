@@ -1,0 +1,115 @@
+
+---les noms de classes de doivent pas contenir des char speci
+---les noms des attributs ......
+--- le nom de class doit commencer par majuscule
+---- les attributs doivent avoir un type
+---- pas d'héritage multiple
+---  toutes les méthodes qui commencent par set ne retournent rien
+---- toutes les méthodes qui commenccent par get recçoivent rien
+query examenP = (
+				'Les classes suivantes ne sont pas respecte la règle 1\n'
+				+
+				MMU!Class.allInstances()->iterate(c;acc:String=''|acc+c.regleNomClass())
+				+
+				'Les attributs suivantes ne sont pas respecte la règle 2\n'
+				+
+				MMU!Class.allInstances()->iterate(c;acc:String=''|acc+c.regleNomAttributs())
+				+
+				'Les classes suivantes ne sont pas respecte la règle 3\n'
+				+			
+				MMU!Class.allInstances()->iterate(c;acc:String=''|acc+c.regleMajNom())
+				+
+				'Les attributs suivantes ne sont pas respecte la règle 4\n'
+				+
+		     	MMU!Class.allInstances()->iterate(c;acc:String=''|acc+c.regleAttributetype())
+				+
+				'Les classes suivantes ne sont pas respecte la règle 5\n'
+				+
+				MMU!Class.allInstances()->iterate(c;acc:String=''|acc+c.a_heritageM())
+				+
+				'Les methodes suivantes ne sont pas respecte la règle 6\n'
+				
+				+
+				MMU!Class.allInstances()->iterate(c;acc:String=''|acc+c.methodesSetVerify())
+				+
+				'Les methodes suivantes ne sont pas respecte la règle 7\n'
+				+
+				MMU!Class.allInstances()->iterate(c;acc:String=''|acc+c.methodesGetVerify())
+				
+				)
+				.
+				writeTo('C:/Users/ismail ktami/Desktop/ATL Project_KTAMI ISMAIL/Transformations/RapportsErreursKTAMIISMAIL.txt');
+
+		
+
+
+helper context MMU!Class def: regleNomClass():String=
+	if self.a_corriger() then 
+		'\t-La classe << '+self.name +'>>'+'\n'
+	else
+		''
+	endif
+		;
+
+helper context MMU!Class def:regleMajNom():String=
+	if self.name.substring(1,1).toUpper() <> self.name.substring(1,1) then 
+		'\t-La classe '+self.name+'\n'
+	else 
+		''
+	endif
+		;
+
+
+helper context MMU!Class def:regleNomAttributs():String=
+	self.ownedAttribute->iterate(a;acc:String=''|acc+
+			(if(a.a_corriger()) then 
+					'\t-L attribut '+a.name+' dans la classe : '+self.name+'\n'
+			else
+				''
+			endif)
+	)	
+	;
+
+helper context MMU!Class def:regleAttributetype():String=
+		self.ownedAttribute->iterate(a;acc:String=''|acc+
+		if a.type.oclIsUndefined() then
+			'\tLes attribut  '+self.name +'  dans la classe'+self.name+'\n'
+		else
+			''
+		endif
+		
+		)
+	;
+
+helper context MMU!Class def:a_heritageM():String=
+	if self.superClass->size()>1 then
+		'\t-La classe '+self.name+'\n'
+	else '' 
+	endif
+	
+	;
+
+helper context MMU!Class def:methodesSetVerify():String=
+	self.ownedOperation->select(m|m.name.startsWith('set') and not m.type.oclIsUndefined())
+					   ->iterate(m;acc:String=''|acc+
+					   	'\tLa methode '+m.name +' dans la classe '+self.name+'\n'
+					   )
+	
+	;
+
+
+helper context MMU!Class def:methodesGetVerify():String=
+	self.ownedOperation->select(m|m.name.startsWith('get') and  m.ownedParameter->size()>1 and m.type.oclIsUndefined())
+					   ->iterate(m;acc:String=''|acc+
+					   	'\tLa methode '+m.name +' dans la classe '+self.name
+					   )
+	
+	;
+
+helper context MMU!Element def:a_corriger():Boolean=
+		if(self.name.indexOf(' ')+self.name.indexOf('-')+self.name.indexOf('.')  >0) then
+			true
+		else 
+			false
+		endif
+	;

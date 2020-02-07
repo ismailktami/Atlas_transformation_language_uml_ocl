@@ -1,0 +1,32 @@
+query generationinterfaces = 
+	MMU!Interface.allInstances()->forAll(i|i.createInterface().
+		writeTo('C:/Users/ismail ktami/Desktop/ATL Project_KTAMI ISMAIL/Transformations/'+i.name+'.java'));
+
+helper context MMU!Interface def:createInterface():String=
+	self.header()+'\n\n\t'+
+	self.getAllMethodstoImplements()+'\n'+
+	self.footer();
+
+helper context MMU!Interface def: header():String=
+	'\n public  interface '+ self.name+'{'	;
+	
+helper context MMU!Interface def:footer():String='}';
+	
+helper context MMU!Interface def: getAllMethodstoImplements():String=
+	self.ownedOperation->iterate(m;acc:String=''|acc+m.visibility+' '+m.corrigerType()+' '+   m.name+'('+m.getParameterIn().replace(',)',')')+'\n');
+
+
+helper context MMU!Element def : corrigerType():String=
+		if self.type.oclIsUndefined() then 'void'
+		else if self.name='Integer' then 'int' 
+		else if self.name='Boolean' then 'boolean'
+		else self.name
+		endif
+		endif
+		endif
+	;
+helper context MMU!Operation def:getParameterIn():String=
+	self.ownedParameter->select(p|p.direction.toString()='in')->iterate(p;acc:String=''|acc+p.corrigerType()+' '+p.name+',')+')'
+	;
+	
+
